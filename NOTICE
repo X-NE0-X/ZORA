@@ -1,0 +1,14 @@
+ZORA
+Copyright 2026 X-NE0-X
+
+ZORA is source-available under the combined license in LICENSE, which consists
+of the Apache License, Version 2.0 subject to Commons Clause v1.0.
+All redistributions must retain the complete combined license, including the
+Commons Clause condition. Do not relabel the combined grant as Apache-2.0 alone.
+
+BacktestEngine, CTX, FactorEngine and ENV_MGMT under harness/_vendor are
+first-party code according to the rights holder's attestation recorded in
+provenance.json. They are covered by the project LICENSE.
+
+Separately installed dependencies and provider executables retain their own
+licenses. See THIRD_PARTY_NOTICES.md. This notice does not relicense them.

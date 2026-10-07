@@ -1,0 +1,11 @@
+{
+  "name": "prior_factors_block",
+  "description": "Injected into the proposer turn during walk-forward evolution: factors that already PASSED out-of-sample at EARLIER research dates, so later dates can build on what works (learning by doing). Omitted when there are no prior wins.",
+  "placeholders": ["prior_block"],
+  "template": [
+    "",
+    "For context, these factors already PASSED out-of-sample at earlier research dates.",
+    "Build on what worked; do not simply repeat them:",
+    "$prior_block"
+  ]
+}

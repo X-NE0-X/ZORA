@@ -1,0 +1,15 @@
+{
+  "name": "user_synthesis",
+  "description": "User turn for the research-journal synthesis: hands over the deterministic digest of every archived run and names the optimisation objective the verdicts were scored on, so the model reasons against the goal that was actually in force rather than a generic notion of 'good'.",
+  "placeholders": ["notes", "objective"],
+  "template": [
+    "The objective every verdict below was scored on is: $objective.",
+    "A factor PASSED only if its out-of-sample $objective cleared that run's Pass Line.",
+    "",
+    "Here is the full record:",
+    "",
+    "$notes",
+    "",
+    "Write the synthesis now."
+  ]
+}

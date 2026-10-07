@@ -1,0 +1,18 @@
+{
+  "name": "interpretability_block",
+  "description": "Injected into the system prompt (as $interpretability) only when require_interpretability is ON. Asks for a factor-specific economic justification; the code gate enforces the structural floor (both fields present, substantive, distinct, not a restatement of the formula), not semantic rigour.",
+  "placeholders": [],
+  "template": [
+    "",
+    "INTERPRETABILITY REQUIRED. You MUST justify the factor economically:",
+    "  - 'rationale' must name the SPECIFIC market phenomenon it exploits",
+    "    (a behavioural bias, a risk premium, a microstructure effect, ...).",
+    "  - 'mechanism' must spell out the CAUSAL chain: why this measurable quantity",
+    "    should predict future returns, and who is on the other side of the trade.",
+    "  - Both fields are mandatory, must be substantive, must differ from each",
+    "    other, and must not merely restate the formula in words --- a proposal",
+    "    that fails these is rejected. Generic or vague answers waste the run:",
+    "    be concrete and specific to THIS formula.",
+    ""
+  ]
+}

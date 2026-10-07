@@ -1,0 +1,11 @@
+{
+  "name": "negative_factors_block",
+  "description": "Injected into the proposer turn during walk-forward evolution: factors that FAILED out-of-sample at EARLIER research dates, with the reason. Negative memory across dates so later dates do not re-invent known-dead mechanisms. Point-in-time gated (only failures whose OOS window has closed) and omitted when there are none.",
+  "placeholders": ["negative_block"],
+  "template": [
+    "",
+    "These factors FAILED out-of-sample at earlier research dates. Do not repeat",
+    "them or their mechanism --- learn from what did NOT work:",
+    "$negative_block"
+  ]
+}

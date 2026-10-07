@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "project": "ZORA",
+  "public_rights_holder": "X-NE0-X",
+  "source_repository": "https://github.com/X-NE0-X/ZORA",
+  "license_expression": "LicenseRef-ZORA-Source-Available",
+  "rights_attestation": {
+    "date": "2026-10-07",
+    "basis": "Direct confirmation by the rights holder: all authored code is their own; imported packages are separate dependencies.",
+    "scope": "Project-authored source, including the four engine/support directories listed below.",
+    "limitation": "An owner attestation, not an independent audit of original authorship or historical source commits. No unavailable upstream commit or external license grant has been invented."
+  },
+  "components": [
+    {"path": "harness/_vendor/BacktestEngine", "origin": "first-party", "license_file": "LICENSE"},
+    {"path": "harness/_vendor/CTX", "origin": "first-party", "license_file": "LICENSE"},
+    {"path": "harness/_vendor/FactorEngine", "origin": "first-party", "license_file": "LICENSE"},
+    {"path": "harness/_vendor/ENV_MGMT", "origin": "first-party", "license_file": "LICENSE"}
+  ]
+}

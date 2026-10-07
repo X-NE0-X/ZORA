@@ -1,0 +1,16 @@
+{
+  "name": "journal_block",
+  "description": "Injected into the proposer turn: the researcher's accumulated experience from PREVIOUS runs, read out of the persistent journal (harness/memory/). Distinct from prior_factors_block / negative_factors_block, which carry only what happened at earlier dates INSIDE the current walk-forward. Deduplicated by formula, so a mechanism that died repeatedly carries its own weight. Omitted when the journal is empty or config.memory is off.",
+  "placeholders": ["n_runs", "journal_block"],
+  "template": [
+    "",
+    "RESEARCH JOURNAL --- what you have already learned across $n_runs previous",
+    "run(s) of this harness. This is your accumulated experience, not this run's",
+    "history. Use it: do not spend iterations re-deriving a mechanism the record",
+    "already shows is dead, and do not simply copy a past winner either --- the",
+    "universe, the window and the objective may differ. `xN` is how many times a",
+    "formula has landed the same way, and `#` stands in for a number that varied",
+    "between those occurrences.",
+    "$journal_block"
+  ]
+}

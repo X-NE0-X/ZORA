@@ -1,0 +1,22 @@
+{
+  "name": "user_initial",
+  "description": "First user turn: ask the model to invent a factor from scratch at research date T_n.",
+  "placeholders": [
+    "n_symbols", "asset_class", "tn", "is_start", "objective_label",
+    "cmp", "pass_line", "output_format"
+  ],
+  "template": [
+    "Invent ONE novel factor for a basket of $n_symbols $asset_class instruments.",
+    "You are standing at $tn and may optimise on data from $is_start to $tn.",
+    "Optimise the $objective_label (out-of-sample Pass Line: $cmp $pass_line).",
+    "Prefer factors with a clear economic rationale.",
+    "",
+    "Format example (this only shows the FORMAT; invent a different factor):",
+    "{\"formula\": \"rank(ts_mean(close, 20)) / rank(ts_std(close, 20))\",",
+    " \"rationale\": \"stable low-vol names outperform over one month\",",
+    " \"mechanism\": \"risk premia compensation, not a momentum bet\",",
+    " \"expected_sign\": 1}",
+    "",
+    "$output_format"
+  ]
+}

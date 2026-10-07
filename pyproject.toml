@@ -1,0 +1,168 @@
+[build-system]
+requires = ["setuptools==84.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zora-harness"
+version = "0.1.0"
+description = "Provider-agnostic factor-mining harness: NL -> factor formula -> backtest -> iterate -> Pass/Fail"
+readme = "README.md"
+license = "LicenseRef-ZORA-Source-Available"
+license-files = ["LICENSE", "NOTICE", "THIRD_PARTY_NOTICES.md", "provenance.json"]
+authors = [{name = "X-NE0-X"}]
+maintainers = [{name = "X-NE0-X"}]
+keywords = ["quantitative-research", "backtesting", "factor-research"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Scientific/Engineering",
+]
+# A WINDOW, not a floor. The old ">=3.10" was unsatisfiable: vectorbt 1.1.0 --
+# which every real run goes through -- declares ">=3.11,<3.15", so
+# `pip download --python-version 3.10 zora-harness[infra]` ends in
+# ResolutionImpossible. The harness SOURCE is genuinely 3.10-clean --
+# ast.parse(..., feature_version=(3, 10)) accepts all 56 package modules -- so
+# the floor is imposed by the dependency set, not by the syntax. Declaring the
+# floor the source could support rather than the one the dependencies allow
+# just moves the failure from a clear install-time message to a resolver puzzle.
+# The ceiling is vectorbt's. CPython 3.14 is the interpreter this is developed,
+# tested and pinned against (see requirements.txt) and must be inside the
+# window. CI has syntax-only jobs for 3.11-3.13; full engine regression and
+# installed-wheel execution target Windows / CPython 3.14 only.
+requires-python = ">=3.11,<3.15"
+# Bounded on BOTH sides. The project's headline claim is bit-exact
+# reproducibility, and an unbounded ">=" floor concedes that claim for the
+# numeric half: a future numpy or pandas can silently change a rolling
+# statistic, an NaN rule or a float reduction order and every recorded metric
+# moves. Floors are the versions actually tested (requirements.txt pins the
+# whole resolved closure); ceilings are the next boundary the maintainers of
+# those projects are free to break at.
+dependencies = [
+    "numpy>=2.4.6,<2.5",
+    "pandas>=3.0.3,<4.0",
+    "packaging>=24.0,<27.0",
+]
+
+[project.optional-dependencies]
+# The vendored engine (harness/_vendor) is what actually runs the
+# backtest/factor engine, so ANY real run (and the test suite) needs these.
+#
+# TA-Lib wraps a native C library, but on any platform PyPI has a wheel for it
+# is self-contained: ta_lib-0.7.0-cp314-manylinux_2_17_x86_64.whl carries
+# ta_lib.libs/libta-lib-*.so.0.6.4 inside it, and no system package is needed.
+# Where there is NO wheel, pip falls back to the sdist and the build fails deep
+# inside a C compile -- install libta-lib from the ta-lib release first. (CI
+# passes --only-binary=ta-lib so that fallback can never happen silently.)
+#
+# The numpy window here is ONE MINOR VERSION WIDE and that is not a choice:
+# numba 0.66 requires numpy<2.5 while vectorbt 1.1.0 requires numpy>=2.4.6, so
+# the whole feasible set is numpy 2.4.x. It is written out explicitly because a
+# reader who bumps either package needs to see the squeeze before pip does.
+infra = [
+    "vectorbt>=1.1.0,<1.2",
+    "TA-Lib>=0.7.0,<0.8",
+    "numba>=0.66.0,<0.67",
+    "duckdb>=1.5.4,<2.0",
+    "cloudpickle>=3.1.2,<4.0",
+    "matplotlib>=3.11.0,<4.0",
+    "rich>=15.0.0,<16.0",
+    "pyarrow>=24.0.0,<25.0",
+]
+# Real-data loading enters the vendored CTX shared import bundle, which imports
+# the same runtime stack as a backtest. Keep this extra self-sufficient: users
+# following README's ``pip install '.[data]'`` must be able to load CTX/yfinance
+# and execute the resulting panel without separately guessing ``.[infra]``.
+data = [
+    "exchange-calendars>=4.13.2,<5.0",
+    "yfinance>=1.5.1,<2.0",
+    "pyarrow>=24.0.0,<25.0",
+    "vectorbt>=1.1.0,<1.2",
+    "TA-Lib>=0.7.0,<0.8",
+    "numba>=0.66.0,<0.67",
+    "duckdb>=1.5.4,<2.0",
+    "cloudpickle>=3.1.2,<4.0",
+    "matplotlib>=3.11.0,<4.0",
+    "rich>=15.0.0,<16.0",
+]
+tui = ["textual>=8.2.8,<9.0"]
+# Provider SDKs are bounded at the next major only: neither is installed in the
+# reference environment (they are reached over the network, and the offline
+# suite uses the scripted/replay providers), so there is no tested version to
+# pin to and inventing one would be a lie. Same for pytest-asyncio -- the
+# canonical runner and bare pytest share pytest-asyncio's TUI execution path.
+claude = ["anthropic>=0.40,<1.0"]
+openai = ["openai>=2.0,<3.0"]
+deepseek = ["openai>=2.0,<3.0"]
+dev = ["pytest>=9.1.1,<10.0", "pytest-asyncio>=0.23,<2.0", "textual>=8.2.8,<9.0"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+cache_dir = "artifacts/.pytest_cache"
+addopts = "--strict-markers"
+markers = [
+    "current: current strict-math-v2 defaults (also contract-neutral behavior)",
+]
+
+[project.scripts]
+zora-harness = "harness.cli:main"
+
+[project.urls]
+Repository = "https://github.com/X-NE0-X/ZORA"
+Issues = "https://github.com/X-NE0-X/ZORA/issues"
+Security = "https://github.com/X-NE0-X/ZORA/security/advisories/new"
+
+[tool.setuptools.packages.find]
+# `harness*` also matches harness._vendor.* now that every vendored directory
+# has an __init__.py. Before they had one, PackageFinder refused to descend into
+# them -- it returned exactly ['harness', 'harness.factor', 'harness.providers']
+# -- and the built wheel shipped no engine at all.
+include = ["harness*"]
+
+# The wheel's data manifest is EXACTLY the list below -- include-package-data is
+# switched off so that MANIFEST.in (which governs the sdist, and which grafts
+# whole directories) can never quietly push a file into site-packages. The file
+# that must never travel is harness/_vendor/ENV_MGMT/.env: it is the developer's
+# real API keys.
+[tool.setuptools]
+include-package-data = false
+
+# Enumerated, not globbed. Every one of these is load-bearing and each has a
+# different failure signature when it goes missing, none of which mentions
+# packaging:
+#   * prompts/*.json  -- promptlib raises PromptAssetError; the run reports
+#     "provider error" once per iteration and dies with "no valid active factor
+#     proposal was produced", i.e. it blames the model.
+#   * CTX.json / FactorEngine.json -- Config.py and Specs.py resolve them with
+#     Path(__file__).with_name(...) at IMPORT time, so a missing sidecar is an
+#     ImportError from inside the vendored engine.
+# A wildcard would have been shorter and would also have matched nothing at all
+# for the _vendor packages while they were invisible to PackageFinder, which is
+# precisely the bug that shipped. The prompt list mirrors
+# promptlib.REQUIRED_PROMPTS; tests/test_prompts.py pins that tuple to the
+# source directory and the CI wheel probe pins it to the installed wheel, so
+# adding a prompt without touching this list fails CI rather than users.
+[tool.setuptools.package-data]
+"harness" = [
+    "prompts/dead_ends_block.json",
+    "prompts/interpretability_block.json",
+    "prompts/journal_block.json",
+    "prompts/multi_candidate_block.json",
+    "prompts/negative_factors_block.json",
+    "prompts/prior_factors_block.json",
+    "prompts/system_propose.json",
+    "prompts/system_synthesis.json",
+    "prompts/user_initial.json",
+    "prompts/user_refine.json",
+    "prompts/user_synthesis.json",
+]
+"harness._vendor.CTX" = ["CTX.json"]
+"harness._vendor.FactorEngine" = ["FactorEngine.json"]
+# Documentation, not credentials: the committed template of the .env the README
+# tells you to copy. The .env itself is git-ignored and, by the enumeration
+# above, unshippable.
+"harness._vendor.ENV_MGMT" = [".env.template"]

@@ -1,0 +1,19 @@
+{
+  "name": "user_refine",
+  "description": "Iteration user turn: show the model the FULL in-sample metric set of its previous factor(s) AND name its optimisation objective (the configured metric + out-of-sample Pass Line) so it knows what it is improving, while still seeing every metric so it weighs the whole picture instead of gaming one number with a broken book.",
+  "placeholders": ["history_block", "objective_label", "cmp", "pass_line", "output_format"],
+  "template": [
+    "Here are the in-sample results of your previous factor(s), with the full",
+    "metric set shown for each:",
+    "$history_block",
+    "Your optimisation objective is the $objective_label (out-of-sample Pass Line:",
+    "$cmp $pass_line) --- that is the metric your factor is ultimately judged on, so",
+    "work to improve it. The other numbers above (return, risk, drawdown, turnover,",
+    "breadth) are the full picture: use them to improve the $objective_label WITHOUT",
+    "quietly breaking the book --- a great ratio on a near-empty position or one with",
+    "absurd turnover is not real. Decide what is worth changing, then propose a",
+    "better factor.",
+    "",
+    "$output_format"
+  ]
+}

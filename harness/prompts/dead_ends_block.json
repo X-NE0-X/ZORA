@@ -1,0 +1,11 @@
+{
+  "name": "dead_ends_block",
+  "description": "Injected into the proposer turn: candidates already tried at THIS research date that were rejected, were uncomputable, or were pre-screened out --- with the reason each failed. Kept as negative memory so the model stops re-inventing the same dead ends within a date. Omitted when nothing has failed yet.",
+  "placeholders": ["dead_ends_block"],
+  "template": [
+    "",
+    "Do NOT repeat these dead ends from earlier tries at THIS date (each was",
+    "rejected before it could be scored --- avoid them and their failure mode):",
+    "$dead_ends_block"
+  ]
+}

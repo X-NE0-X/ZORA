@@ -1,0 +1,14 @@
+{
+  "name": "multi_candidate_block",
+  "description": "Appended to the proposer turn ONLY when candidates_per_round > 1 (search breadth): asks for a single JSON object whose candidates field is an array of N genuinely-distinct candidate factors.",
+  "placeholders": ["n_candidates"],
+  "template": [
+    "",
+    "IMPORTANT --- this breadth round return one JSON object whose candidates field",
+    "is a JSON ARRAY of exactly $n_candidates objects (not a bare array). Each object",
+    "uses the same keys (formula, rationale, mechanism, expected_sign). Make the",
+    "candidates genuinely DISTINCT ideas --- different mechanisms, fields, or",
+    "horizons, not cosmetic variants of one formula --- so the search covers more",
+    "ground. Return the JSON object now."
+  ]
+}

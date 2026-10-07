@@ -1,0 +1,70 @@
+# SDIST manifest.
+#
+# Division of labour, deliberately strict: this file governs the SOURCE
+# distribution only, and [tool.setuptools.package-data] in pyproject.toml
+# governs the wheel. `include-package-data` is switched off there so the two
+# cannot bleed into each other -- a graft added here for the convenience of
+# someone reading the tarball must never end up inside site-packages.
+#
+# Both halves are needed. The wheel had no data files at all (60 entries, five
+# of them .dist-info metadata, not one JSON), which is what made an installed
+# harness fail at iteration 0 with a FileNotFoundError for user_initial.json.
+# An sdist that rebuilt into that same broken wheel would have hidden the fix.
+
+# --- the data the installed package loads at runtime -------------------------
+# Duplicated from package-data on purpose: setuptools derives sdist contents
+# from the build_py file list, so this is redundant *today*, and it is the
+# cheap insurance that a future change to how the wheel manifest is expressed
+# cannot silently empty the tarball too.
+recursive-include harness/prompts *.json
+include harness/_vendor/CTX/CTX.json
+include harness/_vendor/FactorEngine/FactorEngine.json
+include harness/_vendor/ENV_MGMT/.env.template
+
+# --- things only a source distribution has any use for -----------------------
+# requirements.txt is the pinned reference environment (the lock); the two JSON
+# configs are the worked examples the README's CLI lines refer to; tests/ is
+# what makes the tarball verifiable rather than merely readable.
+include requirements.txt
+include SECURITY.md
+include THIRD_PARTY_NOTICES.md
+include LICENSE
+include NOTICE
+include provenance.json
+include CONTRIBUTING.md
+include RELEASE.md
+include requirements-release.txt
+recursive-include tools *.py
+include .github/workflows/ci.yml
+include field_config.json
+include run_config.json
+include data/README.md
+include data/field_ingest.py
+recursive-include tests *.py
+include tests/strict_math_cases.json
+
+# --- never ship ---------------------------------------------------------------
+# Runtime output, all of it regenerable and some of it embedding absolute local
+# paths (ArchiveDeck) or the developer's own research journal (memory/).
+#
+# Every directive in this section makes the build print "no previously-included
+# files/directories found matching ...". That is the SUCCESS message: nothing
+# above ever included them, so there is nothing to remove. Deleting these lines
+# to quieten the build would remove the guard and leave no trace of why it was
+# ever there.
+prune artifacts
+prune ArchiveDeck
+prune FLEET_SCIENCE
+prune memory
+prune .pytest_cache
+
+# Ordering matters -- MANIFEST.in directives are applied in sequence, so the
+# excludes have to come last to override the includes above them.
+# `.env` is the developer's real API keys. It is git-ignored, it is not matched
+# by any include here, and it is excluded anyway: the cost of the line is one
+# line and the cost of being wrong is a published credential. `.env.template`,
+# the committed placeholder, is a different filename and survives.
+global-exclude .env
+global-exclude .env.local .env.production .env.development .env.test
+global-exclude *.py[cod]
+global-exclude *.parquet

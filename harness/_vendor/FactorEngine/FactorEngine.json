@@ -1,0 +1,256 @@
+{
+  "PRICE": {
+    "kind": "identity",
+    "defaults": {},
+    "param_names": [],
+    "timing_semantics": "raw",
+    "writeback": { "mode": "series" }
+  },
+
+  "VOLUME": {
+    "kind": "identity",
+    "defaults": {},
+    "param_names": [],
+    "timing_semantics": "raw",
+    "writeback": { "mode": "series" }
+  },
+
+  "TURNOVER": {
+    "kind": "identity",
+    "defaults": {},
+    "param_names": [],
+    "timing_semantics": "raw",
+    "writeback": { "mode": "series" }
+  },
+
+  "HMA": {
+    "kind": "numba",
+    "defaults": { "period": null },
+    "param_names": ["period"],
+    "calc_name": "_hma",
+    "input_mode": "price1d",
+    "param_cast": ["int16"],
+    "timing_semantics": "t_inclusive",
+    "writeback": { "mode": "series" }
+  },
+
+  "MACD": {
+    "kind": "talib",
+    "defaults": { "fast": 12, "slow": 26, "sig": 9 },
+    "param_names": ["fastperiod", "slowperiod", "signalperiod"],
+    "talib_name": "MACD",
+    "alias_map": { "fastperiod": "fast", "slowperiod": "slow", "signalperiod": "sig" },
+    "class_name": "MACD_TALIB_IND",
+    "short_name": "MACD_TALIB",
+    "input_names": ["close"],
+    "output_names": ["macd", "signal", "hist"],
+    "output_mode": "stack",
+    "single_calc_name": "macd",
+    "param_cast": ["int16", "int16", "int16"],
+    "timing_semantics": "t_inclusive",
+    "writeback": { "mode": "macd", "suffixes": ["", "_Signal", "_Histogram"] }
+  },
+
+  "RSI": {
+    "kind": "talib",
+    "defaults": { "period": null },
+    "param_names": ["timeperiod"],
+    "talib_name": "RSI",
+    "alias_map": { "timeperiod": "period" },
+    "class_name": "RSI_TALIB_IND",
+    "short_name": "RSI_TALIB",
+    "input_names": ["close"],
+    "output_names": ["rsi"],
+    "output_mode": "series",
+    "single_calc_name": "rsi",
+    "param_cast": ["int16"],
+    "timing_semantics": "t_inclusive",
+    "writeback": { "mode": "series" }
+  },
+
+  "ACC_RETURN": {
+    "kind": "numba",
+    "defaults": { "period": null },
+    "param_names": ["period"],
+    "calc_name": "_acc_return",
+    "input_mode": "price1d",
+    "param_cast": ["int16"],
+    "timing_semantics": "t_inclusive",
+    "writeback": { "mode": "series" }
+  },
+
+  "CONVERGENCE": {
+    "kind": "numba",
+    "defaults": { "pattern_window": null },
+    "param_names": ["pattern_window"],
+    "calc_name": "_convergence",
+    "input_mode": "price2d",
+    "param_cast": ["int16_array"],
+    "timing_semantics": "pre_t",
+    "writeback": {
+      "mode": "convergence",
+      "labels": [
+        "CONV_COUNT",
+        "PEAK_MAX",
+        "PEAK_MIN",
+        "PEAK_MEAN",
+        "PEAK_DIFF",
+        "BOT_MAX",
+        "BOT_MIN",
+        "BOT_MEAN",
+        "BOT_DIFF",
+        "PEAK_CNT",
+        "BOT_CNT"
+      ]
+    }
+  },
+
+  "DIVERGENCE": {
+    "kind": "numba",
+    "defaults": { "divergence_window": null, "dd_period_2nd": null },
+    "param_names": ["divergence_window", "dd_period_2nd"],
+    "calc_name": "_divergence",
+    "input_mode": "price2d_pair",
+    "param_cast": ["int16_array", "int16_array"],
+    "timing_semantics": "pre_t",
+    "writeback": {
+      "mode": "divergence",
+      "labels": [
+        "PEAK_FAKE",
+        "PEAK_NEW",
+        "PEAK",
+        "BOTTOM_FAKE",
+        "BOTTOM_NEW",
+        "BOTTOM"
+      ]
+    }
+  },
+  
+  "SLOPE": {
+    "kind": "numba",
+    "defaults": { "shift": 1, "mode": 0 },
+    "param_names": ["shift", "mode"],
+    "calc_name": "_slope",
+    "input_mode": "price2d",
+    "param_cast": ["int16", "slope_mode"],
+    "timing_semantics": "t_inclusive",
+    "writeback": { "mode": "slope" }
+  },
+
+  "PREV_DIFF": {
+    "kind": "numba",
+    "defaults": { "lag_left": 2, "lag_right": 1 },
+    "param_names": ["lag_left", "lag_right"],
+    "calc_name": "_prev_diff",
+    "input_mode": "price2d",
+    "param_cast": ["int16", "int16"],
+    "timing_semantics": "pre_t",
+    "writeback": { "mode": "series" }
+  },
+
+  "PREV_ROLLMAX_SAFE": {
+    "kind": "numba",
+    "defaults": { "window": 12, "warmup": 12, "shift": 1, "sentinel": 0.0 },
+    "param_names": ["window", "warmup", "shift", "sentinel"],
+    "calc_name": "_prev_rollmax_safe",
+    "input_mode": "price2d",
+    "param_cast": ["int16", "int16", "int16", "float32"],
+    "timing_semantics": "raw",
+    "writeback": { "mode": "series" }
+  },
+
+  "QUANTILE": {
+    "kind": "numba",
+    "defaults": { "window": null, "quantile": null, "scale": 1.0, "label": "" },
+    "param_names": ["window", "quantile", "scale"],
+    "calc_name": "_roll_quantile",
+    "input_mode": "price2d",
+    "param_cast": ["int16_array", "float32_array", "float32"],
+    "timing_semantics": "pre_t",
+    "writeback": { "mode": "quantile" }
+  },
+
+  "BARRA_BETA": {
+    "kind": "numba",
+    "kernel_class": "Barra",
+    "input_fields": ["Close", "Volume"],
+    "calc_name": "_beta",
+    "defaults": { "window": 252, "halflife": 63 },
+    "param_names": ["window", "halflife"],
+    "timing_semantics": "t_close",
+    "kernel_config": { "adv_window": 21 },
+    "writeback": { "mode": "series" }
+  },
+
+  "BARRA_MOMENTUM": {
+    "kind": "numba",
+    "kernel_class": "Barra",
+    "input_fields": ["Close", "Volume"],
+    "calc_name": "_momentum",
+    "defaults": { "window": 120, "lag": 5, "halflife": 60 },
+    "param_names": ["window", "lag", "halflife"],
+    "timing_semantics": "t_close",
+    "kernel_config": { "adv_window": 21 },
+    "writeback": { "mode": "series" }
+  },
+
+  "BARRA_SIZE": {
+    "kind": "numba",
+    "kernel_class": "Barra",
+    "input_fields": ["Close", "OpenInterest", "Volume"],
+    "calc_name": "_size",
+    "defaults": {},
+    "param_names": [],
+    "timing_semantics": "t_close",
+    "kernel_config": { "adv_window": 21 },
+    "writeback": { "mode": "series" }
+  },
+
+  "BARRA_NLSIZE": {
+    "kind": "numba",
+    "kernel_class": "Barra",
+    "input_fields": ["Close", "OpenInterest", "Volume"],
+    "calc_name": "_nlsize",
+    "defaults": {},
+    "param_names": [],
+    "timing_semantics": "t_close",
+    "kernel_config": { "adv_window": 21 },
+    "writeback": { "mode": "series" }
+  },
+
+  "BARRA_RESID_VOL": {
+    "kind": "numba",
+    "kernel_class": "Barra",
+    "input_fields": ["Close", "Volume"],
+    "calc_name": "_resid_vol",
+    "defaults": { "window": 252, "halflife": 63, "hl_dastd": 42, "hl_hsigma": 63 },
+    "param_names": ["window", "halflife", "hl_dastd", "hl_hsigma"],
+    "timing_semantics": "t_close",
+    "kernel_config": { "weights": [0.75, 0.15, 0.10], "adv_window": 21 },
+    "writeback": { "mode": "series" }
+  },
+
+  "BARRA_NLBETA": {
+    "kind": "numba",
+    "kernel_class": "Barra",
+    "input_fields": ["Close", "Volume"],
+    "calc_name": "_nlbeta",
+    "defaults": { "window": 252, "halflife": 63 },
+    "param_names": ["window", "halflife"],
+    "timing_semantics": "t_close",
+    "kernel_config": { "adv_window": 21 },
+    "writeback": { "mode": "series" }
+  },
+
+  "BARRA_LIQUIDITY": {
+    "kind": "numba",
+    "kernel_class": "Barra",
+    "input_fields": ["Close", "OpenInterest", "Volume"],
+    "calc_name": "_liquidity",
+    "defaults": {},
+    "param_names": [],
+    "timing_semantics": "t_close",
+    "kernel_config": { "weights": [0.35, 0.35, 0.30], "adv_window": 21 },
+    "writeback": { "mode": "series" }
+  }
+}

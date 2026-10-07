@@ -1,0 +1,57 @@
+# NOTE: git has NO inline comments. A trailing "# ..." is part of the pattern,
+# so every comment here must sit on its own line or the rule silently never
+# matches (that is how ArchiveDeck/ ended up committed once already).
+
+# --- harness runtime output (all CWD-relative; safe to delete) ---
+# run ledgers, manifests, cache, TUI previews
+artifacts/
+# CTX pipeline logs + transmission payloads (they embed absolute local paths)
+ArchiveDeck/
+# FactorEngine on-disk factor cache (if ever enabled)
+FLEET_SCIENCE/
+
+# The public source distribution includes the regression suite and tools.
+# Private runtime state is excluded; tests must remain available to reviewers.
+
+# --- python ---
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# --- build products ---
+# `pip install -e .` (README Quick Start) generates zora_harness.egg-info/ in the
+# working tree; `python -m build` generates build/ and dist/.
+*.egg-info/
+build/
+dist/
+.eggs/
+
+# --- virtualenvs ---
+.venv/
+venv/
+env/
+
+# --- editor / OS / agent local state ---
+# .claude/settings.local.json embeds ~60 absolute developer paths. It was only
+# ever excluded by a MACHINE-LEVEL global ignore, so a fresh clone, a new
+# machine, or CI running `git add -A` would have committed it.
+.claude/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# --- data / secrets ---
+*.parquet
+.env
+.env.*
+!.env.template
+
+# Research results are operator-private runtime state. Keep the empty directory
+# marker only; publishing factor ledgers or generated notes requires a separate,
+# explicit export decision.
+memory/*
+!memory/raw/
+memory/raw/*
+!memory/raw/.gitkeep
+memory/ResearchNotes.md
